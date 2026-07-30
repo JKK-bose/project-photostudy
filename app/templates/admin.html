@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Админ-панель — Фото-студия «Ракурс»{% endblock %}
+{% block content %}
+
+<section class="admin-header">
+  <h1>Панель администратора</h1>
+  <p>Всего заявок: {{ total }}</p>
+</section>
+
+<section class="admin-filters">
+  <a href="{{ url_for('main.admin_panel') }}" class="filter-chip {{ 'active' if not status_filter }}">Все ({{ counts_map.values()|sum if counts_map else 0 }})</a>
+  {% for key, label in STATUS_LABELS.items() %}
+  <a href="{{ url_for('main.admin_panel', status=key) }}" class="filter-chip status-{{ key }} {{ 'active' if status_filter==key }}">
+    {{ label }} ({{ counts_map.get(key, 0) }})
+  </a>
+  {% endfor %}
+</section>
+
+<section class="admin-table">
+  {% if bookings %}
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>№</th><th>Клиент</th><th>Контакты</th><th>Вариант</th><th>Дата / время</th><th>Оплата</th><th>Статус</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for b in bookings %}
+        <tr id="row-{{ b.id }}">
+          <td data-label="№">{{ b.id }}</td>
+          <td data-label="Клиент">{{ b.client_name }}</td>
+          <td data-label="Контакты">{{ b.client_phone }}<br>{{ b.client_email }}</td>
+          <td data-label="Вариант">{{ b.type_name }}</td>
+          <td data-label="Дата / время">{{ b.booking_date }} {{ b.booking_time }}</td>
+          <td data-label="Оплата">{{ PAYMENT_LABELS[b.payment_method] }}</td>
+          <td data-label="Статус">
+            <form class="status-form" data-booking-id="{{ b.id }}" action="{{ url_for('main.update_status', booking_id=b.id) }}" method="post">
+              <select name="status" class="status-select status-{{ b.status }}">
+                {% for key, label in STATUS_LABELS.items() %}
+                <option value="{{ key }}" {{ 'selected' if b.status==key }}>{{ label }}</option>
+                {% endfor %}
+              </select>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if total_pages > 1 %}
+  <nav class="pagination" aria-label="Постраничная навигация">
+    {% for p in range(1, total_pages + 1) %}
+      <a href="{{ url_for('main.admin_panel', status=status_filter, page=p) }}"
+         class="page-link {{ 'active' if p == page }}">{{ p }}</a>
+    {% endfor %}
+  </nav>
+  {% endif %}
+
+  {% else %}
+  <p class="empty-state">Заявок по выбранному фильтру нет.</p>
+  {% endif %}
+</section>
+
+{% endblock %}

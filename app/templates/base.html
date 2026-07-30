@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Фото-студия «Ракурс»{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="{{ url_for('main.index') }}" class="logo" aria-label="Фото-студия Ракурс — на главную">
+      <span class="logo-icon" aria-hidden="true">&#128247;</span> Ракурс
+    </a>
+    <button class="burger" id="burgerBtn" aria-label="Открыть меню" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="main-nav" id="mainNav">
+      <a href="{{ url_for('main.index') }}">Главная</a>
+      {% if current_user.id %}
+        {% if current_user.role == 'admin' %}
+          <a href="{{ url_for('main.admin_panel') }}">Админ-панель</a>
+        {% else %}
+          <a href="{{ url_for('main.cabinet') }}">Личный кабинет</a>
+        {% endif %}
+        <span class="nav-user">{{ current_user.full_name }}</span>
+        <a href="{{ url_for('main.logout') }}" class="btn btn-ghost">Выйти</a>
+      {% else %}
+        <a href="{{ url_for('main.login') }}" class="btn btn-ghost">Войти</a>
+        <a href="{{ url_for('main.register') }}" class="btn btn-primary">Регистрация</a>
+      {% endif %}
+    </nav>
+  </div>
+</header>
+
+<main class="container page-content">
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <p>&copy; 2026 Фото-студия «Ракурс». Учебный проект в рамках практики ПМ.05.</p>
+  </div>
+</footer>
+
+<div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <script>
+      window.__flashMessages = {{ messages | tojson }};
+    </script>
+  {% endif %}
+{% endwith %}
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

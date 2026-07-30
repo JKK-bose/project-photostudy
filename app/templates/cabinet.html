@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Личный кабинет — Фото-студия «Ракурс»{% endblock %}
+{% block content %}
+
+<section class="cabinet-header">
+  <h1>Здравствуйте, {{ current_user.full_name }}!</h1>
+  <p>Здесь вы можете посмотреть свои заявки и создать новую.</p>
+</section>
+
+<section class="my-bookings">
+  <h2>Мои заявки</h2>
+  {% if bookings %}
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>№</th><th>Вариант</th><th>Дата</th><th>Время</th><th>Оплата</th><th>Статус</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for b in bookings %}
+        <tr>
+          <td data-label="№">{{ b.id }}</td>
+          <td data-label="Вариант">{{ b.type_name }}</td>
+          <td data-label="Дата">{{ b.booking_date }}</td>
+          <td data-label="Время">{{ b.booking_time }}</td>
+          <td data-label="Оплата">{{ PAYMENT_LABELS[b.payment_method] }}</td>
+          <td data-label="Статус"><span class="status-badge status-{{ b.status }}">{{ STATUS_LABELS[b.status] }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="empty-state">У вас пока нет заявок. Заполните форму ниже, чтобы заказать первую фотосессию.</p>
+  {% endif %}
+</section>
+
+<section class="new-booking">
+  <h2>Новая заявка</h2>
+  <form method="post" novalidate class="form" id="bookingForm">
+    <div class="form-group {{ 'has-error' if errors.get('photoshoot_type_id') }}">
+      <label for="photoshoot_type_id">Вариант фотосессии</label>
+      <select id="photoshoot_type_id" name="photoshoot_type_id" required>
+        <option value="">— выберите —</option>
+        {% for t in types %}
+        <option value="{{ t.id }}" {{ 'selected' if form.get('photoshoot_type_id')|string == t.id|string }}>
+          {{ t.name }} — {{ "%.0f"|format(t.price) }} ₽
+        </option>
+        {% endfor %}
+      </select>
+      {% if errors.get('photoshoot_type_id') %}<span class="error-text">{{ errors.photoshoot_type_id }}</span>{% endif %}
+    </div>
+
+    <div class="form-row">
+      <div class="form-group {{ 'has-error' if errors.get('booking_date') }}">
+        <label for="booking_date">Дата</label>
+        <input type="date" id="booking_date" name="booking_date" value="{{ form.get('booking_date','') }}" required>
+        {% if errors.get('booking_date') %}<span class="error-text">{{ errors.booking_date }}</span>{% endif %}
+      </div>
+      <div class="form-group {{ 'has-error' if errors.get('booking_time') }}">
+        <label for="booking_time">Время</label>
+        <input type="time" id="booking_time" name="booking_time" value="{{ form.get('booking_time','') }}" required>
+        {% if errors.get('booking_time') %}<span class="error-text">{{ errors.booking_time }}</span>{% endif %}
+      </div>
+    </div>
+
+    <div class="form-group {{ 'has-error' if errors.get('payment_method') }}">
+      <label>Способ оплаты</label>
+      <div class="radio-group">
+        {% for val, label in [('cash','Наличными'), ('card','Картой в студии'), ('online','Онлайн-оплата')] %}
+        <label class="radio-option">
+          <input type="radio" name="payment_method" value="{{ val }}" {{ 'checked' if form.get('payment_method')==val }} required>
+          {{ label }}
+        </label>
+        {% endfor %}
+      </div>
+      {% if errors.get('payment_method') %}<span class="error-text">{{ errors.payment_method }}</span>{% endif %}
+    </div>
+
+    <div class="form-group">
+      <label for="comment">Комментарий (необязательно)</label>
+      <textarea id="comment" name="comment" rows="3" placeholder="Пожелания к съёмке">{{ form.get('comment','') }}</textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-block">Отправить заявку</button>
+  </form>
+</section>
+
+{% endblock %}

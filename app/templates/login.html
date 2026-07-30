@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Вход — Фото-студия «Ракурс»{% endblock %}
+{% block content %}
+<section class="auth-section">
+  <div class="auth-card">
+    <h1>Вход в систему</h1>
+    {% if error %}<p class="alert alert-error">{{ error }}</p>{% endif %}
+    <form method="post" novalidate class="form">
+      <div class="form-group">
+        <label for="login">Логин</label>
+        <input type="text" id="login" name="login" value="{{ login_value }}" required autofocus>
+      </div>
+      <div class="form-group">
+        <label for="password">Пароль</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Войти</button>
+    </form>
+    <p class="auth-switch">Нет аккаунта? <a href="{{ url_for('main.register') }}">Зарегистрироваться</a></p>
+    <p class="auth-hint">Демо-доступ администратора: <code>admin</code> / <code>Admin12345</code></p>
+  </div>
+</section>
+{% endblock %}

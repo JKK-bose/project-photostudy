@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Фото-студия «Ракурс» — портфолио и заказ фотосессии{% endblock %}
+{% block content %}
+
+<section class="hero">
+  <h1>Фото-студия «Ракурс»</h1>
+  <p class="hero-sub">Портфолио наших работ и онлайн-заказ фотосессии за пару минут.</p>
+  {% if current_user.id and current_user.role != 'admin' %}
+    <a href="{{ url_for('main.cabinet') }}" class="btn btn-primary btn-lg">Заказать фотосессию</a>
+  {% elif not current_user.id %}
+    <a href="{{ url_for('main.register') }}" class="btn btn-primary btn-lg">Заказать фотосессию</a>
+  {% endif %}
+</section>
+
+<section class="slider" aria-label="Портфолио фотостудии" aria-roledescription="карусель">
+  <div class="slider-track" id="sliderTrack">
+    <figure class="slide">
+      <img src="{{ url_for('static', filename='img/slide-1.jpg') }}" alt="Портретная фотосессия в студии" loading="lazy">
+      <figcaption>Портретная съёмка</figcaption>
+    </figure>
+    <figure class="slide">
+      <img src="{{ url_for('static', filename='img/slide-2.jpg') }}" alt="Семейная фотосессия в студии" loading="lazy">
+      <figcaption>Семейная съёмка</figcaption>
+    </figure>
+    <figure class="slide">
+      <img src="{{ url_for('static', filename='img/slide-3.jpg') }}" alt="Свадебная фотосессия" loading="lazy">
+      <figcaption>Свадебная съёмка</figcaption>
+    </figure>
+    <figure class="slide">
+      <img src="{{ url_for('static', filename='img/slide-4.jpg') }}" alt="Предметная фотосъёмка товаров" loading="lazy">
+      <figcaption>Предметная съёмка</figcaption>
+    </figure>
+  </div>
+  <button class="slider-btn slider-prev" id="sliderPrev" aria-label="Предыдущее изображение">&#10094;</button>
+  <button class="slider-btn slider-next" id="sliderNext" aria-label="Следующее изображение">&#10095;</button>
+  <div class="slider-dots" id="sliderDots" role="tablist" aria-label="Выбор слайда"></div>
+</section>
+
+<section class="types">
+  <h2>Варианты фотосессий</h2>
+  <div class="type-grid">
+    {% for t in types %}
+    <article class="type-card">
+      <h3>{{ t.name }}</h3>
+      <p>{{ t.description }}</p>
+      <p class="type-meta"><strong>{{ "%.0f"|format(t.price) }} ₽</strong> · {{ t.duration_minutes }} мин</p>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+{% endblock %}

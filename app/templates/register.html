@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Регистрация — Фото-студия «Ракурс»{% endblock %}
+{% block content %}
+<section class="auth-section">
+  <div class="auth-card">
+    <h1>Регистрация</h1>
+    <form method="post" novalidate class="form">
+      <div class="form-group {{ 'has-error' if errors.get('full_name') }}">
+        <label for="full_name">ФИО</label>
+        <input type="text" id="full_name" name="full_name" value="{{ form.get('full_name','') }}" placeholder="Иванова Мария Сергеевна" required>
+        {% if errors.get('full_name') %}<span class="error-text">{{ errors.full_name }}</span>{% endif %}
+      </div>
+
+      <div class="form-group {{ 'has-error' if errors.get('login') }}">
+        <label for="login">Логин</label>
+        <input type="text" id="login" name="login" value="{{ form.get('login','') }}" placeholder="maria_ivanova" required>
+        {% if errors.get('login') %}<span class="error-text">{{ errors.login }}</span>{% endif %}
+      </div>
+
+      <div class="form-group {{ 'has-error' if errors.get('phone') }}">
+        <label for="phone">Телефон</label>
+        <input type="tel" id="phone" name="phone" value="{{ form.get('phone','') }}" placeholder="+79991234567" required>
+        {% if errors.get('phone') %}<span class="error-text">{{ errors.phone }}</span>{% endif %}
+      </div>
+
+      <div class="form-group {{ 'has-error' if errors.get('email') }}">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" value="{{ form.get('email','') }}" placeholder="maria@example.com" required>
+        {% if errors.get('email') %}<span class="error-text">{{ errors.email }}</span>{% endif %}
+      </div>
+
+      <div class="form-group {{ 'has-error' if errors.get('password') }}">
+        <label for="password">Пароль</label>
+        <input type="password" id="password" name="password" placeholder="минимум 6 символов, буквы и цифры" required>
+        {% if errors.get('password') %}<span class="error-text">{{ errors.password }}</span>{% endif %}
+      </div>
+
+      <div class="form-group {{ 'has-error' if errors.get('password2') }}">
+        <label for="password2">Повторите пароль</label>
+        <input type="password" id="password2" name="password2" required>
+        {% if errors.get('password2') %}<span class="error-text">{{ errors.password2 }}</span>{% endif %}
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block">Зарегистрироваться</button>
+    </form>
+    <p class="auth-switch">Уже есть аккаунт? <a href="{{ url_for('main.login') }}">Войти</a></p>
+  </div>
+</section>
+{% endblock %}
